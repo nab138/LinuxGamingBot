@@ -1,6 +1,7 @@
 # LinuxGamingBot
 A small bot that is **undergoing active development** designed to help linux gamers and provide benefits to developers who publish native linux builds.
 
+You can view a trello board for this project [here](https://trello.com/b/id1J1Uw8/linuxgamingbot)
 ## Usage
 
 I don't recommend you try to run this yet but heres the instructions anyway
