@@ -3,9 +3,9 @@ A small bot that is **undergoing active development** designed to help linux gam
 
 ## Usage
 
-I don't reccomend you try to run this yet but heres the instructions anyway
+I don't recommend you try to run this yet but heres the instructions anyway
 
-You have to have nodejs v16.0.0 or above installed
+You have to have nodejs v16 or above installed
 
 Step one: Clone the repository and `cd` into it. `git clone https://github.com/nab138/LinuxGamingBot.git && cd LinuxGamingBot`
 
