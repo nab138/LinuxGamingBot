@@ -13,7 +13,7 @@ Step two: Install dependencies. `npm install`
 
 Step three: Create an application on the [Discord Developer Portal](https://discord.com/developers/applications/) and copy the token.
 
-Step four: Create a new file in `storage` called token.json and put `{"token":"token from discord developer portal"}`. `echo {"token":"token from discord developer portal"} >> storage/token.json`
+Step four: Create a new file in the "storage" directory called "token.json" and put `{"token":"token from discord developer portal"}` in it. `echo {"token":"token from discord developer portal"} >> storage/token.json`
 
 Step five: Start the bot. `node .`
 
