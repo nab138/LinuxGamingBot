@@ -1,5 +1,5 @@
 # LinuxGamingBot
-A small bot that is **undergoing active development** designed to help linux gamers and developers publish native linux builds.
+A small bot that is **undergoing active development** designed to help linux gamers and provide benefits to developers who publish native linux builds.
 
 ## Usage
 
