@@ -1,11 +1,12 @@
 // Load modules
 const fs = require('fs');
-const cron = require('node-cron')
+const CronJob = require('cron').CronJob;
 const Discord = require('discord.js');
+const ms = require('ms')
 // Update the games on sale every hour
 const scan = require('./utils/scan')
 const rand = require('./utils/random')
-cron.schedule('0 6,18 * * *', startScan)
+new CronJob('0 6,18 * * *', function(){setTimeout(scan, rand.range(1000, 7200000))}, null, true, 'America/New_York').start()
 // Discord.js stuff
 const { token } = require('./storage/token.json')
 const config = require('./storage/config.json')
@@ -48,10 +49,4 @@ client.on('interactionCreate', async interaction => {
 		await interaction.reply({ content: `An error occurred. ${err.stack}`, ephemeral: true });
 	}
 });
-function startScan(){
-	let random = rand.range(1000, 7200000)
-	console.log('Test')
-	console.log(random)
-	setTimeout(scan, random)
-}
 client.login(token);
