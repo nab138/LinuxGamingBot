@@ -8,7 +8,7 @@ const { convertArrayToCSV } = require('convert-array-to-csv');
 const querystring = require('querystring');
 module.exports.scan = scan;
 module.exports.devScan = developerScan;
-developerScan()
+
 async function developerScan(){
     console.log(`[${timestamp()}] DevScan started`)
     let driver = new webdriver.Builder()
