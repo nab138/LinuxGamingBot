@@ -1,3 +1,5 @@
 node_modules
 storage/token.json
 storage/games.json
+storage/developers.csv
+utils/proxies.txt

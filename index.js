@@ -4,7 +4,7 @@ const CronJob = require('cron').CronJob;
 const Discord = require('discord.js');
 const ms = require('ms')
 // Update the games on sale every hour
-const scan = require('./utils/scan')
+const { scan } = require('./utils/scan')
 const rand = require('./utils/random')
 new CronJob('0 6,18 * * *', function(){setTimeout(scan, rand.range(1000, 7200000))}, null, true, 'America/New_York').start()
 // Discord.js stuff
