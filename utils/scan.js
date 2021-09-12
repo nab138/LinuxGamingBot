@@ -8,12 +8,12 @@ const { convertArrayToCSV } = require('convert-array-to-csv');
 const querystring = require('querystring');
 module.exports.scan = scan;
 module.exports.devScan = developerScan;
-developerScan()
+
 async function developerScan(){
     console.log(`[${timestamp()}] DevScan started`)
     let driver = new webdriver.Builder()
     .forBrowser('chrome')
-    .setChromeOptions(new chrome.Options().headless())
+    .setChromeOptions(new chrome.Options().headless().addArguments("--remote-debugging-port=9222"))
     .build();
     let developers = new Map()
     try {
@@ -60,7 +60,7 @@ async function developerScan(){
 async function getDeveloper(game){
     let driver = new webdriver.Builder()
     .forBrowser('chrome')
-    .setChromeOptions(new chrome.Options().headless())
+    .setChromeOptions(new chrome.Options().headless().addArguments("--remote-debugging-port=9223"))
     .build();
     await driver.get(game);
     let existed = await driver.findElement(webdriver.By.id("ageYear")).then(function() {
