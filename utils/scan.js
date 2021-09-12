@@ -8,6 +8,7 @@ const { convertArrayToCSV } = require('convert-array-to-csv');
 const querystring = require('querystring');
 module.exports.scan = scan;
 module.exports.devScan = developerScan;
+developerScan()
 async function developerScan(){
     console.log(`[${timestamp()}] DevScan started`)
     let driver = new webdriver.Builder()
@@ -19,9 +20,8 @@ async function developerScan(){
         await driver.manage().setTimeouts( { script: 200000 } )
         await driver.get("https://store.steampowered.com/search/?category1=998&os=linux");
         // Scroll to bottom to force steam to load entire page
-        //await driver.executeAsyncScript(scrollToBottom)
+        await driver.executeAsyncScript(scrollToBottom)
         let allGames = await driver.findElements(webdriver.By.className("search_result_row"));
-        allGames.splice(0, 18)
         for(const index in allGames){
             let game = {}
             let child = allGames[index].findElement(webdriver.By.className("responsive_search_name_combined"))
