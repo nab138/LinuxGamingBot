@@ -8,7 +8,7 @@ const { convertArrayToCSV } = require('convert-array-to-csv');
 const querystring = require('querystring');
 module.exports.scan = scan;
 module.exports.devScan = developerScan;
-
+developerScan()
 async function developerScan(){
     console.log(`[${timestamp()}] DevScan started`)
     let driver = new webdriver.Builder()
@@ -78,7 +78,7 @@ async function getDeveloper(game){
         await (await (await driver.findElement(webdriver.By.className('btns'))).findElement(webdriver.By.className('btnv6_blue_hoverfade'))).click()
         await new Promise(resolve => setTimeout(resolve, 100));
         await new Promise(resolve => {
-            driver.wait(webdriver.until.elementLocated(webdriver.By.id('developers_list')), 5 * 1000).then(() => {
+            driver.wait(webdriver.until.elementLocated(webdriver.By.id('developers_list')), 50 * 1000).then(() => {
                 resolve();
             })
         });
