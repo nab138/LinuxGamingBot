@@ -26,7 +26,7 @@ module.exports = {
                 
                 const {author} = interaction
                 let minDis = await interaction.options.getInteger("discount") ?? 75
-                const games = require('../storage/SaleGames.json').filter(function(object){return parseInt(object.discount) >= minDis })
+                const games = require('../storage/games.json').filter(function(object){return parseInt(object.discount) >= minDis })
                 
                 /**
                  * Creates an embed with games starting from an index.
