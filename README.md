@@ -3,7 +3,7 @@ A small bot that is **undergoing active development** designed to help linux gam
 
 You can view a trello board for this project [here](https://trello.com/b/id1J1Uw8/linuxgamingbot)
 
-## Contribution
+## Contributing
 
 New commands and other contributions are always welcome, but what would help the most is filling out more emails in storage/developers.csv.
 
