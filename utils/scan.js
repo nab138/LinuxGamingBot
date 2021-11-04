@@ -1,6 +1,6 @@
-require('geckodriver');
+require('chromedriver');
 const webdriver = require('selenium-webdriver');
-const firefox = require('selenium-webdriver/firefox');
+const chrome = require('selenium-webdriver/chrome');
 const fs = require('fs')
 const scrollToBottom = require('./scrollToBottom')
 const timestamp = require('./timestamp')
@@ -12,7 +12,7 @@ let devs = new Map()
 const parse = require('csv-parse/lib/sync');
 module.exports.scan = scan;
 module.exports.devScan = developerScan;
-developerScan()
+
 async function developerScan(){
     let t0 = performance.now()
     total = 0;
@@ -22,17 +22,15 @@ async function developerScan(){
     const fileContent = await fs.readFileSync('./storage/developers.csv');
     const records = await parse(fileContent, {columns: true, delimiter: ';'});
     let loadedGames = []
-    let loadedNames = []
     for(const record of records){
         let tmp = record.games.split(',')
         for(const game of tmp){
             loadedGames.push(game)
         }
-        loadedNames.push(record.name)
     }
-    let driver = new webdriver.Builder().forBrowser('firefox').setFirefoxOptions(new firefox.Options().headless()).build();
+    let driver = new webdriver.Builder().forBrowser('chrome').setChromeOptions(new chrome.Options().headless().addArguments("--disable-gpu").addArguments("start-maximized")).build();
     try {
-        //await driver.manage().setTimeouts( { script: 200000 } )
+        await driver.manage().setTimeouts( { script: 200000 } )
         await driver.get("https://store.steampowered.com/search/?category1=998&os=linux");
         // Scroll to bottom to force steam to load entire page
         console.log(`[${timestamp()}] Retrieving all linux games from steam`);
@@ -66,7 +64,7 @@ async function developerScan(){
             }
             await driver.quit();
             let t1 = performance.now()
-            console.log(`[${timestamp()}] Scan finished, found ${devs.size - oldSize} devs and updated ${devs.size} devs in ${Math.round(((t1 - t0) / 1000) * 100) / 100} seconds`)
+            console.log(`[${timestamp()}] Scan finished, found ${Math.max((devs.size - oldSize), 0)} devs and updated ${devs.size} devs in ${Math.round(((t1 - t0) / 1000) * 100) / 100} seconds`)
         })
           }).catch(async (err) => {
             let oldSize = new Map(records.map(key => [key.name, {email: key.email, games: key.games.split(','), url: key.url}])).size
@@ -79,7 +77,7 @@ async function developerScan(){
                 }
                 try{await driver.quit()}catch(e){void e};
                 let t1 = performance.now()
-                console.log(`[${timestamp()}] Scan finished, found ${devs.size - oldSize} devs and updated ${devs.size} devs in ${Math.round(((t1 - t0) / 1000) * 100) / 100} seconds`)
+                console.log(`[${timestamp()}] Scan finished, found ${Math.max((devs.size - oldSize), 0)} devs and updated ${devs.size} devs in ${Math.round(((t1 - t0) / 1000) * 100) / 100} seconds`)
             })
             console.log(`An error occured during the scan. Results have been written to storage/developersUnsure.csv to prevent overwriting good data with bad data.`)
             console.error(err)
@@ -95,7 +93,7 @@ async function developerScan(){
             }
             try{await driver.quit()}catch(e){void e};
             let t1 = performance.now()
-            console.log(`[${timestamp()}] Scan finished, found ${devs.size - oldSize} devs and updated ${devs.size} devs in ${Math.round(((t1 - t0) / 1000) * 100) / 100} seconds`)
+            console.log(`[${timestamp()}] Scan finished, found ${Math.max((devs.size - oldSize), 0)} devs and updated ${devs.size} devs in ${Math.round(((t1 - t0) / 1000) * 100) / 100} seconds`)
         })
         console.log(`An error occured during the scan. Results have been written to storage/developersUnsure.csv to prevent overwriting good data with bad data.`)
         console.error(e)
@@ -111,26 +109,27 @@ async function startDevscanBatch(allGames, records){
             resolve()
         } else {
             try {
-                let driver = new webdriver.Builder().forBrowser('firefox').setFirefoxOptions(new firefox.Options().headless()).build();
+                let driver = new webdriver.Builder().forBrowser('chrome').setChromeOptions(new chrome.Options().headless().addArguments("--disable-gpu").addArguments("start-maximized")).build();
                 for(const index in allGames){
                     let game = allGames[index].name
-                    console.log(`[${timestamp()}] Scanning ${game}`)
+                    console.log(`[${timestamp()}] Scanning ${game} [${total + 1}/${allGames.length}]`)
                     let url = allGames[index].url
                     let deves = await getDeveloper(url, driver)
                     for(const dev of deves){
-                        if(!developers.has(dev.name.replace(/ \(mac\)/ig, '').replace(/ \(linux\)/ig, ''))){
-                            dev.dev.games = [game]
-                            developers.set(dev.name.replace(/ \(mac\)/ig, '').replace(/ \(linux\)/ig, ''), dev.dev)
+                        dev.name = dev.name.replace(/ \(mac\)/ig, '').replace(/ \(linux\)/ig, '').replace(/&quot/ig, "'").replace(/;/ig, '').replace(/"/ig, "'").replace(/semicolon/ig, '');
+                        if(!developers.has(dev.name)){
+                            dev.dev.games = [game.replace(/;/ig, '')]
+                            developers.set(dev.name, dev.dev)
                         } else {
-                            let map = developers.get(dev.name.replace(/ \(mac\)/ig, '').replace(/ \(linux\)/ig, ''))
+                            let map = developers.get(dev.name)
                             if(!map.games.includes(game)){
-                                map.games.push(game)
-                                developers.set(dev.name.replace(/ \(mac\)/ig, '').replace(/ \(linux\)/ig, ''), map)
+                                map.games.push(game.replace(/;/ig, ''))
+                                developers.set(dev.name, map)
                             }
                         }
                     }
                     total++;
-                    console.log(`[${timestamp()}] Scanned ${game} [${total}/${allGames.length}]`)
+                    console.log(`[${timestamp()}] Scanned ${game} [${Math.round(10000*total / allGames.length)/100}%]`)
                     await new Promise(resolve => setTimeout(resolve, 1000))
                 }
             }   catch (e) {
@@ -151,7 +150,19 @@ async function getDeveloper(game, driver){
     if(game.includes('store.steampowered.com/sub/')) return []
     const originalWindow = await driver.getWindowHandle();
     await driver.switchTo().newWindow('window');
-    await driver.get(game);
+    try {
+        await driver.get(game);
+    } catch (e) {
+        try {
+            console.error(e)
+            await driver.get(game);
+        } catch (er) {
+            console.error(er)
+            await driver.close()
+            await driver.switchTo().window(originalWindow);
+            return []
+        }
+    }
     let existed = await driver.findElement(webdriver.By.id("ageYear")).then(function() {
         return true;
     }, function(err) {
@@ -225,6 +236,7 @@ async function scan(){
         for(const index in allGames){
             let game = {}
             let child = allGames[index].findElement(webdriver.By.className("responsive_search_name_combined"))
+            try {
             let saleRaw = (await (await child.findElement(webdriver.By.className('search_price_discount_combined'))).findElement(webdriver.By.className('search_discount')))
             game.discount = (await saleRaw.getText()).replace('-', '').replace('%', '')
             let url = await allGames[index].getAttribute("href")
@@ -232,6 +244,16 @@ async function scan(){
             game.name = await (await (await child.findElement(webdriver.By.className('search_name'))).findElement(webdriver.By.className('title'))).getText()
             game.price = await (await child.findElement(webdriver.By.className('search_price discounted')).getText()).trim()
             games.push(game)
+            } catch (e) {
+                let url;
+                try {
+                    url = await allGames[index].getAttribute("href")
+                } catch (er) {
+                    url = 'unkown'
+                }
+                console.log(`Error on game ${url}`)
+                console.error(e)
+            }
         }
     } catch (e) {
         console.error(e)
