@@ -2,6 +2,13 @@
 A small bot that is **undergoing active development** designed to help linux gamers and provide benefits to developers who publish native linux builds.
 
 You can view a trello board for this project [here](https://trello.com/b/id1J1Uw8/linuxgamingbot)
+
+## Contribution
+
+New commands and other contributions are always welcome, but what would help the most is filling out more emails in storage/developers.csv.
+
+Open a PR with any contributions and I will review and merge it.
+
 ## Usage
 
 I don't recommend you try to run this yet but heres the instructions anyway
