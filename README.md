@@ -17,7 +17,7 @@ You have to have nodejs v16 or above installed
 
 Step one: Clone the repository and `cd` into it. `git clone https://github.com/nab138/LinuxGamingBot.git && cd LinuxGamingBot`
 
-Step two: Install dependencies. `npm install`
+Step two: Install dependencies. `yarn install`
 
 Step three: Create an application on the [Discord Developer Portal](https://discord.com/developers/applications/) and copy the token.
 
